@@ -1,0 +1,17 @@
+#footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 60px;
+  background-color: #f5f5f5;
+  /* Add top-padding to vertically center text*/
+  padding: 0;
+  font-family: 'Lato', sans-serif;
+  font-weight: 100;
+  margin: 0;
+}
+
+.footer{
+  padding-top: 1.15%;
+}

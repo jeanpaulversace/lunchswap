@@ -1,0 +1,14 @@
+#map {
+	position: fixed;
+	left: 25%;
+	top: 6.3%;
+	bottom: 6%;
+	right: 0;
+	z-index: 1;
+	overflow: none;
+}
+
+#form {
+	padding-left: 3%;
+	padding-right: 3%;
+}
