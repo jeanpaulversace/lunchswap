@@ -1,15 +1,16 @@
-<h1>Login</h1>
-<br><br>
-<%= form_for @user_session, url: {action: "create"}, html: {class: "form-horizontal"} do |f| %>
-  <% if @user_session.errors.any? %>
+<h1>Register</h1>
+<br>
+<%= form_for @user, url: {action: "create"}, html: {class: "form-horizontal"} do |f| %>
+  <% if @user.errors.any? %>
   <div id="error_explanation">
-    <h2><%= pluralize(@user_session.errors.count, "error") %> prohibited:</h2>
+    <h2><%= pluralize(@user.errors.count, "error") %> prohibited:</h2>
     <ul>
-      <% @user_session.errors.full_messages.each do |msg| %>
+      <% @user.errors.full_messages.each do |msg| %>
         <li><%= msg %></li>
       <% end %>
     </ul>
   </div>
+  <br><br>
   <% end %>
   <div class="form-group">
       <%= f.label :login, :class => "col-md-4 control-lab"%>
@@ -17,17 +18,23 @@
       <%= f.text_field :login, :class => "form-control input-md" %>
     </div>
   </div>
- <div class="form-group">
+  <div class="form-group">
       <%= f.label :password, :class => "col-md-4 control-lab" %>
     <div class="col-md-4">
       <%= f.password_field :password, :class => "form-control input-md" %>
     </div>
   </div>
+  <div class="form-group">
+      <%= f.label :password_confirmation, :class => "col-md-4 control-lab" %>
+    <div class="col-md-4">
+      <%= f.password_field :password_confirmation, :class => "form-control input-md" %>
+    </div>
+  </div>
   <center>
   <div class="form-group">
-    <br><br>
+    <br>
     <div class="col-md-4" style="margin-left: 33.5%">
-      <%= f.submit "Login", :class => "btn btn-primary" %>
+      <%= f.submit "Register", :class => "btn btn-primary" %>
     </div>
   </div>
   </center>

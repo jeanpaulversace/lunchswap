@@ -42,3 +42,4 @@ gem 'spring',        group: :development
 gem 'bootstrap_form'
 gem 'authlogic'
 gem 'bcrypt'
+gem 'scrypt'
