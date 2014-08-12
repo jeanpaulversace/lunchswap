@@ -24,11 +24,36 @@ class UserSessionsController < ApplicationController
   end
 
   def index
-    puts "current_user_session #{current_user_session}"
-    puts "Session: #{UserSession.find}"
+    @food = Food.new
 
     if current_user_session == nil
       redirect_to '/login'
     end
+
+    @foods = Food.where.not(user_id: current_user.id.to_i)
+    @user_foods = Food.where(user_id: current_user.id.to_i)
+
   end
+
+  def update_location
+    current_user_id = current_user.id
+    user = User.find(current_user_id)
+
+    puts params.inspect
+
+    if user.update_attributes(latitude: params[:latitude], longitude: params[:longitude])
+      redirect_to '/user_sessions'
+    else
+      raise "error"
+    end
+  end
+  
 end
+
+
+
+
+
+
+
+

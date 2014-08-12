@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140807203527) do
+ActiveRecord::Schema.define(version: 20140810235605) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,6 +22,9 @@ ActiveRecord::Schema.define(version: 20140807203527) do
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "latitude"
+    t.string   "longitude"
+    t.string   "owner"
   end
 
   create_table "users", force: true do |t|
@@ -31,6 +34,9 @@ ActiveRecord::Schema.define(version: 20140807203527) do
     t.string   "persistence_token"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "latitude"
+    t.string   "longitude"
+    t.string   "username"
   end
 
 end

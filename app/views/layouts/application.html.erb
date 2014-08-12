@@ -4,7 +4,7 @@
 	  <title>LunchSwap</title>
 	  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
 	  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
-	  <%= csrf_meta_tags %>
+		<%= csrf_meta_tag %>
 	  <!-- Latest compiled and minified CSS -->
 	  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 	  <!-- Optional theme -->
@@ -18,38 +18,15 @@
 
 	<%= render "layouts/header" %>
 
-	<div class=".col-md-4" id="user-menu">
-		<div class=".col-md-2">
-			<center><h1>Your Lunch</h1></center>
-			<br><br>
-			<center><h1>Add Lunch</h1></center>
-			<div id="form">
-			<%= bootstrap_form_tag url: "/" do |f| %>
-			  <%= f.text_field :name, label: "Food Name", placeholder: "ex: Beef Noodle Soup" %>
-			  <%= f.text_area :description, label: "Description", placeholder: "Please describe ingredients, any allergies, amount, etc.." %>
-			  <%= f.submit "Add" %>
-			<% end %>
-			</div>
-		</div>
-	</div>
-	<div class=".col-md-8" id="map">
-	</div>
+
+	<%= yield %>
 
 
 	<%= render "layouts/footer" %>
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-	<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
-
-	<script type="text/javascript">
-		var map = L.map('map').setView([30.2500, -97.7500], 13);
 
 
 
-		L.tileLayer('http://{s}.tiles.mapbox.com/v3/jeanpaulversace.j60eflje/{z}/{x}/{y}.png', {
-	    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-	    maxZoom: 18
-		}).addTo(map);
-	</script>
 	</body>
 </html>

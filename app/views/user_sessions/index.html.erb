@@ -1,0 +1,82 @@
+<div class=".col-md-4" id="user-menu">
+	<div class=".col-md-2">
+		<center><h1>Your Lunch</h1></center>
+		<ul>
+			<% @user_foods.each do |food| %>
+			<h5><%= food.name %></h5>
+			<li><%= food.description %></li>
+			<% end %>
+		</ul>
+		<br><br>
+		<center><h1>Add Lunch</h1></center>
+		<%= form_for @food, url: "/user_sessions/#{current_user.id}", html: {class: "form-horizontal"} do |f| %>
+		  <% if @food.errors.any? %>
+		  <div id="error_explanation">
+		    <h2><%= pluralize(@food.errors.count, "error") %> prohibited:</h2>
+		    <ul>
+		      <% @food.errors.full_messages.each do |msg| %>
+		        <li><%= msg %></li>
+		      <% end %>
+		    </ul>
+		  </div>
+		  <br><br>
+		  <% end %>
+		  <div class="form-group">
+		      <%= f.label :name, :class => "col-md-4 control-lab"%>
+		    <div class="col-md-4">
+		      <%= f.text_field :name, :class => "form-control input-md" %>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		      <%= f.label :description, :class => "col-md-4 control-lab"%>
+		    <div class="col-md-4">
+		      <%= f.text_area :description, :class => "form-control input-md" %>
+		    </div>
+		  </div>
+		  <center>
+		  <div class="form-group">
+		    <br>
+		    <div class="col-md-4" style="margin-left: 33.5%">
+		      <%= f.submit "Add", :class => "btn btn-primary" %>
+		    </div>
+		  </div>
+		  </center>
+		<% end %>
+	</div>
+</div>
+<div class=".col-md-8" id="map">
+</div>
+
+ <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+
+<script type="text/javascript"> 
+
+var map = L.map('map').setView([30.2500, -97.7500], 13);
+var foods = <%= raw @foods.to_json %>;
+
+L.tileLayer('http://{s}.tiles.mapbox.com/v3/jeanpaulversace.j60eflje/{z}/{x}/{y}.png', {
+  attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+  maxZoom: 18
+}).addTo(map);
+
+console.log("foods: ", foods);
+
+for (var i=0; i< foods.length; i++ ) {
+
+	var marker = L.marker([Number(foods[i].latitude),Number(foods[i].longitude)]).addTo(map);
+
+	console.log("THIS IS WORKING");
+
+	marker.bindPopup(
+		"<form class='request' method='post'"+
+		 "action='/user_sessions/request'>" +
+		"<h1>"+foods[i].owner+"</h1>" +
+		"<p><strong>Food Name</strong>: "+foods[i].name+" </p>" + 
+		"<p><strong>Description</strong>: "+foods[i].description+" </p>" +
+		"<input type='submit' class='btn btn-primary btn-large' value='Request Trade'>" +
+		"<input name='authenticity_token' type='hidden' value='token_value'>" +
+		"</form>").openPopup();
+}
+
+
+</script>
