@@ -1,14 +1,51 @@
 <div class=".col-md-4" id="user-menu">
-	<div class=".col-md-2">
-		<center><h1>Your Lunch</h1></center>
-		<ul>
-			<% @user_foods.each do |food| %>
-			<h5><%= food.name %></h5>
-			<li><%= food.description %></li>
-			<% end %>
-		</ul>
+	<% if !@confirmed.blank? %>
+		<br>
+		<center><h1>Contact Your Accepted Trades</h1></center>
+		<% @confirmed.each do |trade| %>
+			<div class="confirmed-trades" id="<%= trade[:id] %>">
+				<center>
+				<h4><%= trade[:trade_username].username %></h4>
+				<h5><%= trade[:trade_phonenumber] %></h5>
+				</center>
+			</div>
+		<% end %>
+	<% end %>
+	<% if !@requests.blank? %>
+		<br>
+		<center><h1>Pending Requests</h1><center>
+		<% @requests.each do |request| %>
+			<div class="request" id="<%= request[:id] %>">
+				<h4><%= request[:requester_username].username %></h4>
+				<span>would like to trade their</span>
+				<h5 class="trade-food-name"><%= request[:requester_food].name %></h5>
+				<span>for your</span>
+				<h5><%= request[:requestee_food].name %></h5>
+				<button style="padding: 10px 30px" type="button" class="request confirm btn btn-lg btn-success" data-button="<%= request[:id] %>">Accept</button>
+				<button style="padding: 10px 30px" type="button" class="request decline btn btn-lg btn-danger" data-button="<%= request[:id] %>">Decline</button>
+			</div>
+		<% end %>
+	<% end %>
+		<div class=".col-md-2">
+		<% if !@user_foods.blank? %>
+			<br>
+			<center><h1>Your Lunch</h1></center>
+			<br>
+			<ul>
+				<div class="food-list">
+					<% @user_foods.each do |food| %>
+					<div class="food" id="<%=food.id%>">
+					<h5><%= food.name %></h5>
+					<span><%= food.description %></span>
+					</div>
+					<% end %>
+				</div>
+			</ul>
+		<% end %> 
 		<br><br>
 		<center><h1>Add Lunch</h1></center>
+		<br>
+		<div id="add-food">
 		<%= form_for @food, url: "/user_sessions/#{current_user.id}", html: {class: "form-horizontal"} do |f| %>
 		  <% if @food.errors.any? %>
 		  <div id="error_explanation">
@@ -42,6 +79,7 @@
 		  </div>
 		  </center>
 		<% end %>
+		</div>
 	</div>
 </div>
 <div class=".col-md-8" id="map">
@@ -49,34 +87,125 @@
 
  <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
 
-<script type="text/javascript"> 
+<script type="text/javascript">
+var selectedFoodId = null
 
-var map = L.map('map').setView([30.2500, -97.7500], 13);
-var foods = <%= raw @foods.to_json %>;
+navigator.geolocation.getCurrentPosition(showMap);
 
-L.tileLayer('http://{s}.tiles.mapbox.com/v3/jeanpaulversace.j60eflje/{z}/{x}/{y}.png', {
-  attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-  maxZoom: 18
-}).addTo(map);
+function showMap(position) {
+	  window.latitude = position.coords.latitude.toString();
+	 	window.longitude = position.coords.longitude.toString();
+	 	updateLocation();
+	 	renderMap();
+};
 
-console.log("foods: ", foods);
+function renderMap() { 
+	window.map = L.map('map').setView([window.latitude, window.longitude], 15);
 
-for (var i=0; i< foods.length; i++ ) {
+	L.tileLayer('http://{s}.tiles.mapbox.com/v3/jeanpaulversace.j60eflje/{z}/{x}/{y}.png', {
+	  attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+	  maxZoom: 18
+	}).addTo(window.map);
 
-	var marker = L.marker([Number(foods[i].latitude),Number(foods[i].longitude)]).addTo(map);
+	loadFoods();
+};
 
-	console.log("THIS IS WORKING");
+function loadFoods() {
+	var foods = <%= raw @foods.to_json %>;
 
-	marker.bindPopup(
-		"<form class='request' method='post'"+
-		 "action='/user_sessions/request'>" +
-		"<h1>"+foods[i].owner+"</h1>" +
-		"<p><strong>Food Name</strong>: "+foods[i].name+" </p>" + 
-		"<p><strong>Description</strong>: "+foods[i].description+" </p>" +
-		"<input type='submit' class='btn btn-primary btn-large' value='Request Trade'>" +
-		"<input name='authenticity_token' type='hidden' value='token_value'>" +
-		"</form>").openPopup();
-}
+	for (var i=0; i< foods.length; i++ ) {
+
+		var marker = L.marker([Number(foods[i].latitude),Number(foods[i].longitude)]).addTo(window.map);
+
+		marker.bindPopup(
+			"<form class='request' method='post'"+
+			 "action='/request' id='"+foods[i].id+"'>" + 
+			"<h1>"+foods[i].owner+"</h1>" +
+			"<p><strong>Food Name</strong>: "+foods[i].name+" </p>" + 
+			"<p><strong>Description</strong>: "+foods[i].description+" </p>" +
+			"<input type='button' id='trade' class='btn btn-primary btn-large' value='Request Trade'>" +
+			"</form>").openPopup();
+	}
+	
+	$('#trade').on('click', function () {
+		if (selectedFoodId ) {
+			var targetedUser = $('form.request h1').text();
+			var currentUser = <%= raw current_user.id %>
+
+			console.log("is this working?");
+
+			var requestee_food = $(this).parent().attr('id')
+
+			var data = {requestee_user_id: targetedUser, requester_user_id: currentUser, requester_food: selectedFoodId, requestee_food: requestee_food};
+
+			$(".highlight").removeClass("highlight");
+
+			var request = $.ajax({
+				url: "/requests",
+				type: "POST",
+				beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
+				dataType: "json",
+				data: data
+			});
+
+			request.done(function( msg ) {
+			  console.log( msg );
+			});
+			 
+			request.fail(function( jqXHR, textStatus ) {
+			  console.log( "Request failed: " + textStatus + "/"+ jqXHR);
+			});
+		}
+	});
+};
+
+
+$('.food').click(function() {
+    selectedFoodId = $(this).attr('id');
+    div = '#'+ selectedFoodId; //grab #one, #two which correspond to the div id we're targetting
+
+    paragraph = $(div); //store each div in a variable for later use    
+    
+    $('div').removeClass('highlight'); //remove any greyed backgrounds
+    $(paragraph).toggleClass('highlight'); //add grey background to clicked element
+   
+});
+
+$('.trade-food-name').click( function () {
+	$($(this).parent().find(".trade-food-description")).css("display", "block");
+});
+
+$('.request').click(function () {
+	var requestId = $(this).attr("data-button")
+	var decision = null
+
+	if ( $(this).hasClass("confirm") ) {
+		decision = "confirm";
+	}
+	else {
+		decision = "decline";
+	}
+
+	var data = {request_id: requestId, decision: decision}
+
+	var request = $.ajax({
+		url: "/answer_request",
+		type: "POST",
+		beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
+		dataType: "json",
+		data: data
+	});
+
+	request.done(function( msg ) {
+	  console.log( msg );
+	});
+	 
+	request.fail(function( jqXHR, textStatus ) {
+	  console.log( "Request failed: " + textStatus + "/"+ jqXHR);
+	});
+
+
+});
 
 
 </script>

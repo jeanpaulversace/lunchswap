@@ -12,3 +12,29 @@
 	font-family: "Lato", sans-serif;
 	font-weight:400;
 }
+
+#add-food {
+	padding-left: 10%;
+}
+
+.food {
+	border: 1px black solid;
+	padding-left: 1%;
+	margin-right: 10%;
+	margin-bottom: 5%;
+	padding-bottom: 2%;
+}
+
+.highlight {
+	background-color: #9CFF9C
+}
+
+#food_name {
+	width: 175%;
+	height: 50px;
+}
+
+#food_description {
+	width: 175%;
+	height: 100px;
+}

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140810235605) do
+ActiveRecord::Schema.define(version: 20140817214615) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,6 +25,18 @@ ActiveRecord::Schema.define(version: 20140810235605) do
     t.string   "latitude"
     t.string   "longitude"
     t.string   "owner"
+    t.string   "active"
+  end
+
+  create_table "requests", force: true do |t|
+    t.string   "requestee_food"
+    t.string   "requester_food"
+    t.string   "confirmed"
+    t.string   "active"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "requestee_user_id"
+    t.string   "requester_user_id"
   end
 
   create_table "users", force: true do |t|
@@ -37,6 +49,8 @@ ActiveRecord::Schema.define(version: 20140810235605) do
     t.string   "latitude"
     t.string   "longitude"
     t.string   "username"
+    t.string   "requests"
+    t.string   "phonenumber"
   end
 
 end

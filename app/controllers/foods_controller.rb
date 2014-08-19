@@ -16,10 +16,6 @@ class FoodsController < ApplicationController
 
   end
 
-  def add_request
-  	puts params.inspect
-  end
-
   private 
 
   def food_params

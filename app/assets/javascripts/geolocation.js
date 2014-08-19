@@ -1,12 +1,11 @@
 (function () {
 	window.locate = function get_location() {
-		  navigator.geolocation.getCurrentPosition(show_map);
+		  navigator.geolocation.getCurrentPosition(showMap);
 		}();
 
-	function show_map(position) {
+	function showMap(position) {
 	  window.latitude = position.coords.latitude.toString();
 	 	window.longitude = position.coords.longitude.toString();
 	 	updateLocation();
 	};
 })();
-

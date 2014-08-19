@@ -6,8 +6,10 @@ Rails.application.routes.draw do
   get '/register', to: 'users#new'
   post '/user_sessions/:id', to: 'foods#add_food'
   post '/update_location', to: 'user_sessions#update_location'
-  post '/user_sessions/request', to: 'foods#add_request'
+  post '/answer_request', to: 'requests#answer_request'
 
   resources :user_sessions
   resources :users
+  resources :foods
+  resources :requests
 end
